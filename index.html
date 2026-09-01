@@ -42,12 +42,15 @@
 
   <style>
     /* Estilos personalizados y utilidades de impresión */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Dancing+Script:wght@500;700&display=swap');
     body {
       font-family: 'Inter', sans-serif;
     }
     .preview-paper {
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    }
+    .signature-font {
+      font-family: 'Dancing Script', cursive;
     }
   </style>
 </head>
@@ -314,6 +317,49 @@
               ></textarea>
             </div>
 
+            <!-- Separador -->
+            <div class="border-t border-slate-100 pt-1"></div>
+
+            <!-- Fila 6: Firma y Aclaración -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+              <!-- Nombre completo (funciona como firma) -->
+              <div>
+                <label for="signatureName" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                  Nombre y Apellido (Firma) <span class="text-slate-400 font-normal">(Opcional)</span>
+                </label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <i class="fa-solid fa-signature text-sm"></i>
+                  </div>
+                  <input 
+                    type="text" 
+                    id="signatureName" 
+                    placeholder="Ej. Franco Ferreira Montaña" 
+                    class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all outline-none"
+                  >
+                </div>
+              </div>
+
+              <!-- DNI (Aclaración) -->
+              <div>
+                <label for="signatureId" class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1.5">
+                  DNI (Aclaración) <span class="text-slate-400 font-normal">(Opcional)</span>
+                </label>
+                <div class="relative">
+                  <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                    <i class="fa-regular fa-id-card text-sm"></i>
+                  </div>
+                  <input 
+                    type="text" 
+                    id="signatureId" 
+                    placeholder="Ej. 30.123.456" 
+                    class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm font-medium text-slate-800 focus:bg-white focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-all outline-none"
+                  >
+                </div>
+              </div>
+            </div>
+
             <!-- Botones de Acción del Formulario -->
             <div class="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center gap-3">
               <button 
@@ -439,16 +485,16 @@
             <!-- Firmas & Sello Preview -->
             <div class="pt-4 border-t border-slate-100 flex items-end justify-between text-[10px] text-slate-400">
               <div class="space-y-0.5">
-                <p class="font-medium text-slate-500">Delta Academy </p>
-                <p>Ferreira Montanía Franco Nahuel</p>
+                <p class="font-medium text-slate-500">Delta Academy</p>
+                <p>Ferreira Montaña Franco Nahuel</p>
                 <p>CUIT: 20-37222974-9</p>
-                <p class="text-[9px]">Documento no válido como factura</p>
+                <p class="text-[9px]">Documento no válido como factura fiscal</p>
               </div>
-              <div class="text-center w-32">
-                <div class="border-b border-slate-300 pb-5 mb-1 text-slate-300">
-                  <i class="fa-solid fa-signature text-slate-400 text-lg"></i>
+              <div class="text-center w-40">
+                <div class="border-b border-slate-300 pb-1 mb-1 h-9 flex items-end justify-center overflow-hidden">
+                  <span id="pvSignatureName" class="signature-font text-2xl text-brand-900 leading-none whitespace-nowrap"></span>
                 </div>
-                <p class="text-[10px] font-semibold text-slate-600">Administración</p>
+                <p id="pvSignatureId" class="text-[10px] font-semibold text-slate-600">Administración</p>
               </div>
             </div>
           </div>
@@ -522,7 +568,7 @@
       }
 
       // 2. Sincronización en vivo del Formulario a la Vista Previa
-      const inputs = ['receiptNumber', 'receiptDate', 'clientName', 'clientId', 'concept', 'amount', 'paymentMethod', 'notes'];
+      const inputs = ['receiptNumber', 'receiptDate', 'clientName', 'clientId', 'concept', 'amount', 'paymentMethod', 'notes', 'signatureName', 'signatureId'];
 
       // Ajustamos la fecha al día de hoy automáticamente
       const today = new Date();
@@ -564,6 +610,13 @@
         } else {
           notesContainer.classList.add('hidden');
         }
+
+        // Firma (nombre en tipografía cursiva) y aclaración (DNI)
+        const sigName = document.getElementById('signatureName').value.trim();
+        document.getElementById('pvSignatureName').textContent = sigName;
+
+        const sigId = document.getElementById('signatureId').value.trim();
+        document.getElementById('pvSignatureId').textContent = sigId || 'Administración';
       }
 
       // Escuchar eventos en los inputs para actualizar en tiempo real
